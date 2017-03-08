@@ -54,7 +54,7 @@ deploy:
         echo $USERNAME
   - internal/docker-push:
       username: $USERNAME
-      password: $PASSWORD
+      password: $DPASSWORD
       repository: tray/test-repo
       tag: master
       entrypoint: target/universal/play-scala-1.0-SNAPSHOT/bin/play-scala
