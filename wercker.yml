@@ -6,16 +6,17 @@ box: ingensi/play-framework:2.3.8
 #      name: install deps
 #      code: |
 #        yum makecache fast && yum -y install tar
-build:
+#
+#        yum makecache fast && \
+#        yum -y install tar && \
+dev:
   steps:
     - script:
       name: build release
       code: |
-        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > ~/bin/sbt && \
-        chmod 0755 ~/bin/sbt && \
-        yum makecache fast && \
-        yum -y install tar && \
-        ~/bin/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
+        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
+        chmod 0755 /etc/sbt && \
+        /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
         clean universal:package-zip-tarball && \
         mv target/universal/play-scala-1.0-SNAPSHOT.tgz play-scala-1.0-SNAPSHOT.tgz
     - internal/docker-push:
