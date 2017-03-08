@@ -16,6 +16,7 @@ dev:
       code: |
         curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
         chmod 0755 /etc/sbt && \
+        rm $WERCKER_CACHE_DIR/ivy/.sbt.ivy.lock && \
         /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch compile
     - internal/docker-push:
         username: $USERNAME
@@ -30,6 +31,8 @@ build:
       code: |
         curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
         chmod 0755 /etc/sbt && \
+        yum makecache fast && \
+        yum -y install tar && \
         /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
         clean universal:package-zip-tarball && \
         mv target/universal/play-scala-1.0-SNAPSHOT.tgz play-scala-1.0-SNAPSHOT.tgz
