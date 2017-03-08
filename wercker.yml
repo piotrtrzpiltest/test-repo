@@ -52,6 +52,7 @@ deploy:
       name: debug
       code: |
         echo $USERNAME
+        echo "fnwhfd$DPASSWORD"okmaefj
   - internal/docker-push:
       username: $USERNAME
       password: $DPASSWORD
