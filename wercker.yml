@@ -38,9 +38,20 @@ build:
       code: |
         /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
         clean universal:package-zip-tarball && \
-        mv target/universal/play-scala-1.0-SNAPSHOT.tgz play-scala-1.0-SNAPSHOT.tgz
+        tar -xvzf target/universal/play-scala-1.0-SNAPSHOT.tgz -C target/universal/
+## mv target/universal/play-scala-1.0-SNAPSHOT.tgz $WERCKER_OUTPUT_DIR/play-scala-1.0-SNAPSHOT.tgz
+#  - internal/docker-push:
+#      username: $USERNAME
+#      password: $PASSWORD
+#      repository: tray/test-repo
+#      tag: test
+
+deploy:
+  box: tray/java:8-jre-new
+  steps:
   - internal/docker-push:
       username: $USERNAME
       password: $PASSWORD
-      repository: piotrtrzpil/test-repo
+      repository: tray/test-repo
       tag: test
+      entrypoint: target/universal/play-scala-1.0-SNAPSHOT/bin/play-scala
