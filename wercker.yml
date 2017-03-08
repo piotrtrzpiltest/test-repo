@@ -38,8 +38,8 @@ build:
       code: |
         /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
         clean universal:package-zip-tarball && \
-        tar -xvzf target/universal/play-scala-1.0-SNAPSHOT.tgz -C target/universal/
-## mv target/universal/play-scala-1.0-SNAPSHOT.tgz $WERCKER_OUTPUT_DIR/play-scala-1.0-SNAPSHOT.tgz
+        tar -xvzf target/universal/play-scala-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
+##
 #  - internal/docker-push:
 #      username: $USERNAME
 #      password: $PASSWORD
@@ -48,11 +48,6 @@ build:
 deploy:
   box: tray/java:8-jre-new
   steps:
-  - script:
-      name: debug
-      code: |
-        echo $USERNAME
-        echo "fnwhfd$DPASSWORD"okmaefj
   - internal/docker-push:
       username: $USERNAME
       password: $DPASSWORD
