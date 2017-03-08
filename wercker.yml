@@ -1,24 +1,22 @@
-box: java
-
+box: ingensi/play-framework:2.3.8
+#
+#initial-build:
+#  steps:
+#    - script:
+#      name: install deps
+#      code: |
+#        yum makecache fast && yum -y install tar
 build:
   steps:
     - script:
-      name: build scala
+      name: build release
       code: |
-        sudo wget http://downloads.lightbend.com/scala/2.11.8/scala-2.11.8.tgz
-        tar zxvf scala-2.11.8.tgz
-        sudo mv scala-2.11.8 /usr/share/scala
-        sudo ln -s /usr/share/scala/bin/scala /usr/bin/scala
-        sudo ln -s /usr/share/scala/bin/scalac /usr/bin/scalac
-        sudo ln -s /usr/share/scala/bin/fsc /usr/bin/fsc
-        sudo ln -s /usr/share/scala/bin/sbaz /usr/bin/sbaz
-        sudo ln -s /usr/share/scala/bin/sbaz-setup /usr/bin/sbaz-setup
-        sudo ln -s /usr/share/scala/bin/scaladoc /usr/bin/scaladoc
-        sudo ln -s /usr/share/scala/bin/scalap /usr/bin/scalap
-        wget http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.11/sbt-launch.jar
-        printf 'java -Dsbt.ivy.home=${IVY_CACHE_DIR} -Xmx512M ${SBT_OPTS} -jar `dirname $0`/sbt-launch.jar "$@"' > sbt
-        sudo chmod +x ./sbt
-        sudo mv sbt /usr/share/sbt
-        sudo mv sbt-launch.jar /usr/share/sbt-launch.jar
-        sudo ln -s /usr/share/sbt /usr/bin/sbt
-        sudo ln -s /usr/share/sbt-launch.jar /usr/bin/sbt-launch.jar
+        yum makecache fast && \
+        yum -y install tar && \
+        /activator-1.3.2/activator clean universal:package-zip-tarball && \
+        mv target/universal/cluster-service-1.0-SNAPSHOT.tgz cluster-service-1.0-SNAPSHOT.tgz
+    - internal/docker-push:
+        username: $USERNAME
+        password: $PASSWORD
+        repository: piotrtrzpil/test-repo
+        tag: test
