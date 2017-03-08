@@ -45,7 +45,6 @@ build:
 #      password: $PASSWORD
 #      repository: tray/test-repo
 #      tag: test
-
 deploy:
   box: tray/java:8-jre-new
   steps:
