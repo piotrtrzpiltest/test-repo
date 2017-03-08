@@ -48,9 +48,13 @@ build:
 deploy:
   box: tray/java:8-jre-new
   steps:
+  - script:
+      name: debug
+      code: |
+        echo $USERNAME
   - internal/docker-push:
       username: $USERNAME
       password: $PASSWORD
       repository: tray/test-repo
-      tag: test
+      tag: master
       entrypoint: target/universal/play-scala-1.0-SNAPSHOT/bin/play-scala
