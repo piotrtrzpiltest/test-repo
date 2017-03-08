@@ -14,7 +14,7 @@ build:
         yum makecache fast && \
         yum -y install tar && \
         /activator-1.3.2/activator clean universal:package-zip-tarball && \
-        mv target/universal/cluster-service-1.0-SNAPSHOT.tgz cluster-service-1.0-SNAPSHOT.tgz
+        mv target/universal/play-scala-1.0-SNAPSHOT.tgz play-scala-1.0-SNAPSHOT.tgz
     - internal/docker-push:
         username: $USERNAME
         password: $PASSWORD
