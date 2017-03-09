@@ -1,43 +1,41 @@
-#box: ingensi/play-framework:2.3.8
 box: tray/sbt
-
-
-#dev:
-#  steps:
-#    - script:
-#      name: build release
-#      code: |
-#        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
-#        chmod 0755 /etc/sbt && \
-#        rm $WERCKER_CACHE_DIR/ivy/.sbt.ivy.lock && \
-#        /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch compile
-#    - internal/docker-push:
-#        username: $USERNAME
-#        password: $PASSWORD
-#        repository: piotrtrzpil/test-repo
-#        tag: test
 
 build:
   steps:
   - script:
-      name: build release
-      code: |
-        sbt -v \
-            -ivy $WERCKER_CACHE_DIR/ivy \
-            -sbt-dir $WERCKER_CACHE_DIR/sbt \
-            -sbt-boot $WERCKER_CACHE_DIR/sbt-boot \
-            -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
-          clean universal:package-zip-tarball
-        tar -xvzf target/universal/${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
+    name: build release
+    code: |
+      sbt -v \
+          -ivy $WERCKER_CACHE_DIR/ivy \
+          -sbt-dir $WERCKER_CACHE_DIR/sbt \
+          -sbt-boot $WERCKER_CACHE_DIR/sbt-boot \
+          -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
+        clean universal:package-zip-tarball
+      tar -xvzf target/universal/${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
 
-deploy:
+publish:
   box: tray/java:8-jre-new
   steps:
   - internal/docker-push:
-      username: $USERNAME
-      password: $DPASSWORD
-      repository: piotrtrzpil/${WERCKER_GIT_REPOSITORY}
-      tag: $WERCKER_GIT_BRANCH
-      env: APP_VERSION=$WERCKER_GIT_COMMIT
-      ports: 9000
-      entrypoint: ${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT/bin/${WERCKER_GIT_REPOSITORY}
+    username: $USERNAME
+    password: $DPASSWORD
+    repository: piotrtrzpil/${WERCKER_GIT_REPOSITORY}
+    tag: $WERCKER_GIT_BRANCH
+    env: APP_VERSION=$WERCKER_GIT_COMMIT
+    ports: 9000
+    entrypoint: ${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT/bin/${WERCKER_GIT_REPOSITORY}
+
+publish-staging:
+  box: piotrtrzpil/${WERCKER_GIT_REPOSITORY}:$WERCKER_GIT_BRANCH
+  steps:
+  - script:
+    name: add staging files
+    code: |
+      cp staging/staging.conf $WERCKER_OUTPUT_DIR/cs.conf
+      cp staging/logger.xml $WERCKER_OUTPUT_DIR/logger.xml
+  - internal/docker-push:
+    username: $USERNAME
+    password: $DPASSWORD
+    repository: piotrtrzpil/${WERCKER_GIT_REPOSITORY}
+    tag: staging
+    cmd: "-J-Xmx2g -J-Xms1g -Dconfig.file=$WERCKER_OUTPUT_DIR/cs.conf -Dlogger.file=$WERCKER_OUTPUT_DIR/logger.xml"
