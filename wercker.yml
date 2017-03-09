@@ -36,25 +36,22 @@ build:
   - script:
       name: build release
       code: |
-        /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
-        clean universal:package-zip-tarball && \
+        /etc/sbt -v \
+            -ivy $WERCKER_CACHE_DIR/ivy \
+            -sbt-dir $WERCKER_CACHE_DIR/sbt \
+            -sbt-boot $WERCKER_CACHE_DIR/sbt-boot \
+            -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
+          clean universal:package-zip-tarball && \
         tar -xvzf target/universal/${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
-##
-#  - internal/docker-push:
-#      username: $USERNAME
-#      password: $PASSWORD
-#      repository: tray/test-repo
-#      tag: test
+
 deploy:
   box: tray/java:8-jre-new
   steps:
-  - script:
-      name: create version file
-      code: |
-        echo $WERCKER_GIT_COMMIT > /VERSION && cat /VERSION | echo
   - internal/docker-push:
       username: $USERNAME
       password: $DPASSWORD
       repository: piotrtrzpil/test-repo
       tag: $WERCKER_GIT_BRANCH
-      entrypoint: target/universal/${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT/bin/${WERCKER_GIT_REPOSITORY}
+      env: APP_VERSION=$WERCKER_GIT_COMMIT
+      ports: 9000
+      entrypoint: ${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT/bin/${WERCKER_GIT_REPOSITORY}
