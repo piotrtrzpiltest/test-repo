@@ -19,14 +19,14 @@ build:
   - script:
       name: pre build
       code: |
-        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt
-        chmod 0755 /etc/sbt
-        yumm makecache fasta
+        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /usr/bin/sbt
+        chmod 0755 /usr/bin/sbt
+        yum makecache fast
         yum -y install tar
   - script:
       name: build release
       code: |
-        /etc/sbt -v \
+        sbt -v \
             -ivy $WERCKER_CACHE_DIR/ivy \
             -sbt-dir $WERCKER_CACHE_DIR/sbt \
             -sbt-boot $WERCKER_CACHE_DIR/sbt-boot \
