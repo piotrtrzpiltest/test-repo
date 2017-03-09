@@ -21,7 +21,7 @@ build:
       code: |
         curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt
         chmod 0755 /etc/sbt
-        yum makecache fasta
+        yumm makecache fasta
         yum -y install tar
   - script:
       name: build release
