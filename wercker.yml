@@ -1,37 +1,27 @@
 box: ingensi/play-framework:2.3.8
-#
-#initial-build:
+#dev:
 #  steps:
 #    - script:
-#      name: install deps
+#      name: build release
 #      code: |
-#        yum makecache fast && yum -y install tar
-#
-#        yum makecache fast && \
-#        yum -y install tar && \
-dev:
-  steps:
-    - script:
-      name: build release
-      code: |
-        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
-        chmod 0755 /etc/sbt && \
-        rm $WERCKER_CACHE_DIR/ivy/.sbt.ivy.lock && \
-        /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch compile
-    - internal/docker-push:
-        username: $USERNAME
-        password: $PASSWORD
-        repository: piotrtrzpil/test-repo
-        tag: test
+#        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
+#        chmod 0755 /etc/sbt && \
+#        rm $WERCKER_CACHE_DIR/ivy/.sbt.ivy.lock && \
+#        /etc/sbt -v -ivy $WERCKER_CACHE_DIR/ivy -sbt-dir $WERCKER_CACHE_DIR/sbt -sbt-boot $WERCKER_CACHE_DIR/sbt-boot -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch compile
+#    - internal/docker-push:
+#        username: $USERNAME
+#        password: $PASSWORD
+#        repository: piotrtrzpil/test-repo
+#        tag: test
 
 build:
   steps:
   - script:
       name: pre build
       code: |
-        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt && \
-        chmod 0755 /etc/sbt && \
-        yum makecache fast && \
+        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /etc/sbt
+        chmod 0755 /etc/sbt
+        yum makecache fasta
         yum -y install tar
   - script:
       name: build release
@@ -50,7 +40,7 @@ deploy:
   - internal/docker-push:
       username: $USERNAME
       password: $DPASSWORD
-      repository: piotrtrzpil/test-repo
+      repository: piotrtrzpil/${WERCKER_GIT_REPOSITORY}
       tag: $WERCKER_GIT_BRANCH
       env: APP_VERSION=$WERCKER_GIT_COMMIT
       ports: 9000
