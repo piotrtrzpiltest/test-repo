@@ -1,4 +1,7 @@
-box: ingensi/play-framework:2.3.8
+#box: ingensi/play-framework:2.3.8
+box: tray/sbt
+
+
 #dev:
 #  steps:
 #    - script:
@@ -16,13 +19,6 @@ box: ingensi/play-framework:2.3.8
 
 build:
   steps:
-  - script:
-      name: pre build
-      code: |
-        curl -s https://raw.githubusercontent.com/paulp/sbt-extras/master/sbt > /usr/bin/sbt
-        chmod 0755 /usr/bin/sbt
-        yum makecache fast
-        yum -y install tar
   - script:
       name: build release
       code: |
