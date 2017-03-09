@@ -31,7 +31,7 @@ build:
             -sbt-dir $WERCKER_CACHE_DIR/sbt \
             -sbt-boot $WERCKER_CACHE_DIR/sbt-boot \
             -sbt-launch-dir $WERCKER_CACHE_DIR/sbt-launch \
-          clean universal:package-zip-tarball && \
+          clean universal:package-zip-tarball
         tar -xvzf target/universal/${WERCKER_GIT_REPOSITORY}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
 
 deploy:
