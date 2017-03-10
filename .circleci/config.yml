@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /code
     docker:
-      - image: tray/sbt
+      - image: tray/sbt:a
     steps:
       - checkout
       - restore_cache:
