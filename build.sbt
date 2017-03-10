@@ -1,6 +1,10 @@
+import sbt.Keys.name
+
 name := """test-repo"""
 
-version := "1.0-SNAPSHOT"
+version := "0"
+
+packageName in Universal := name.value
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
