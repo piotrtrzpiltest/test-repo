@@ -6,7 +6,6 @@ jobs:
       - image: tray/sbt
     steps:
       - checkout
-      - setup_docker_engine
       - restore_cache:
           key: test-repo-cache
 
@@ -24,6 +23,7 @@ jobs:
             - /ivy
             - /sbt
       - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz
+      - setup_docker_engine
       - run: |
           docker build -t piotrtrzpil/test-repo:circle .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
