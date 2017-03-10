@@ -18,14 +18,14 @@ jobs:
               -sbt-launch-dir /sbt/launch \
             clean universal:package-zip-tarball
      # - run: tar -xvzf target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
+      - save_cache:
+          key: test-repo-cache
+          paths:
+            - /ivy
+            - /sbt
       - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz
       - run: |
           docker build -t piotrtrzpil/test-repo:circle .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker push piotrtrzpil/test-repo:circle
 
-      - save_cache:
-          key: test-repo-cache
-          paths:
-            - /ivy
-            - /sbt
