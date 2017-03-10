@@ -9,7 +9,7 @@ jobs:
       - restore_cache:
           key: test-repo-cache
       - run: |
-          echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch $@" > sbt && chmod 0755 ./sbt
+          echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
           ./sbt clean test
       - save_cache:
           key: test-repo-cache
