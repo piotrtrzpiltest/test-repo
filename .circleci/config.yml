@@ -32,7 +32,7 @@ jobs:
           tar -xz -C /tmp -f /tmp/docker-1.12.3.tgz
           mv /tmp/docker/* /usr/bin
       - run: |
-          docker build -t piotrtrzpil/test-repo:circle .
+          docker build -t piotrtrzpil/test-repo:circle --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker push piotrtrzpil/test-repo:circle
 
