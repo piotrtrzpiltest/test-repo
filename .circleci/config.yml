@@ -8,11 +8,11 @@ jobs:
       - checkout
       - restore_cache:
           key: test-repo-cache
+#      - run: |
+#          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
       - run: |
-          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
-      - run: |
-          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
-          sbt clean test
+#          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
+          sbt -sbt-opts /etc/.sbtopts clean test
 #          sbt -v \
 #              -ivy /ivy \
 #              -sbt-dir /sbt/dir \
@@ -27,8 +27,8 @@ jobs:
       - store_test_results:
           path: target/test-reports
       - run: |
-          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
-          sbt universal:package-zip-tarball
+#          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
+          sbt -sbt-opts /etc/.sbtopts universal:package-zip-tarball
 #          sbt -v \
 #              -ivy /ivy \
 #              -sbt-dir /sbt/dir \
