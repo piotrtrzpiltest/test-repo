@@ -8,17 +8,8 @@ jobs:
       - checkout
       - restore_cache:
           key: test-repo-cache
-#      - run: |
-#          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
       - run: |
-#          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
           sbt -sbt-opts /etc/.sbtopts clean test
-#          sbt -v \
-#              -ivy /ivy \
-#              -sbt-dir /sbt/dir \
-#              -sbt-boot /sbt/boot \
-#              -sbt-launch-dir /sbt/launch \
-#            clean test
       - save_cache:
           key: test-repo-cache
           paths:
@@ -27,26 +18,9 @@ jobs:
       - store_test_results:
           path: target/test-reports
       - run: |
-#          export SBT_OPTS="-v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch"
           sbt -sbt-opts /etc/.sbtopts universal:package-zip-tarball
-#          sbt -v \
-#              -ivy /ivy \
-#              -sbt-dir /sbt/dir \
-#              -sbt-boot /sbt/boot \
-#              -sbt-launch-dir /sbt/launch \
-#            universal:package-zip-tarball
-
-     # - run: tar -xvzf target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
-
       - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
       - setup_docker_engine
-      # use a build image that already has Docker (recommended)
-      # or install it during a build like we do here
-#      - run: |
-#          set -ex
-#          curl -L -o /tmp/docker-1.12.3.tgz https://get.docker.com/builds/Linux/x86_64/docker-1.12.3.tgz
-#          tar -xz -C /tmp -f /tmp/docker-1.12.3.tgz
-#          mv /tmp/docker/* /usr/bin
       - run: |
           docker build -t piotrtrzpil/test-repo:circle --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
