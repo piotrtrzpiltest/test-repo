@@ -29,5 +29,3 @@ jobs:
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker push ${dockerRepoName}:${CIRCLE_SHA1}
           docker push ${dockerRepoName}:${saneBranchName}
-
-
