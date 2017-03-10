@@ -10,12 +10,13 @@ jobs:
       - restore_cache:
           key: test-repo-cache
 
-      - run: sbt -v \
-                 -ivy /ivy \
-                 -sbt-dir /sbt/dir \
-                 -sbt-boot /sbt/boot \
-                 -sbt-launch-dir /sbt/launch \
-               clean universal:package-zip-tarball
+      - run: |
+          sbt -v \
+              -ivy /ivy \
+              -sbt-dir /sbt/dir \
+              -sbt-boot /sbt/boot \
+              -sbt-launch-dir /sbt/launch \
+            clean universal:package-zip-tarball
      # - run: tar -xvzf target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
       - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz
       - run: |
