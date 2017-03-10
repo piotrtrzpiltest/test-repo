@@ -39,3 +39,18 @@ publish-staging:
     repository: piotrtrzpil/${WERCKER_GIT_REPOSITORY}
     tag: staging
     cmd: "-J-Xmx2g -J-Xms1g -Dconfig.file=$WERCKER_OUTPUT_DIR/cs.conf -Dlogger.file=$WERCKER_OUTPUT_DIR/logger.xml"
+
+publish-prod:
+  box: piotrtrzpil/${WERCKER_GIT_REPOSITORY}:$WERCKER_GIT_BRANCH
+  steps:
+  - script:
+    name: add production files
+    code: |
+      cp production/production.conf $WERCKER_OUTPUT_DIR/cs.conf
+      cp production/logger.xml $WERCKER_OUTPUT_DIR/logger.xml
+  - internal/docker-push:
+    username: $USERNAME
+    password: $DPASSWORD
+    repository: piotrtrzpil/${WERCKER_GIT_REPOSITORY}
+    tag: production
+    cmd: "-J-Xmx2g -J-Xms1g -Dconfig.file=$WERCKER_OUTPUT_DIR/cs.conf -Dlogger.file=$WERCKER_OUTPUT_DIR/logger.xml"
