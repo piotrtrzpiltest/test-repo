@@ -8,20 +8,29 @@ jobs:
       - checkout
       - restore_cache:
           key: test-repo-cache
-
       - run: |
           sbt -v \
               -ivy /ivy \
               -sbt-dir /sbt/dir \
               -sbt-boot /sbt/boot \
               -sbt-launch-dir /sbt/launch \
-            clean universal:package-zip-tarball
-     # - run: tar -xvzf target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
+            clean test
       - save_cache:
           key: test-repo-cache
           paths:
             - /ivy
             - /sbt
+      - store_test_results:
+          path: target/test-reports
+      - run: |
+          sbt -v \
+              -ivy /ivy \
+              -sbt-dir /sbt/dir \
+              -sbt-boot /sbt/boot \
+              -sbt-launch-dir /sbt/launch \
+            universal:package-zip-tarball
+     # - run: tar -xvzf target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz -C $WERCKER_OUTPUT_DIR/
+
       - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
       - setup_docker_engine
       # use a build image that already has Docker (recommended)
@@ -35,4 +44,5 @@ jobs:
           docker build -t piotrtrzpil/test-repo:circle --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker push piotrtrzpil/test-repo:circle
+
 
