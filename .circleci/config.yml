@@ -22,7 +22,7 @@ jobs:
           paths:
             - /ivy
             - /sbt
-      - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz
+      - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}-1.0-SNAPSHOT.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
       - setup_docker_engine
       # use a build image that already has Docker (recommended)
       # or install it during a build like we do here

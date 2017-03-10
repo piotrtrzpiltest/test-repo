@@ -1,9 +1,5 @@
-FROM tray/java:8-jre
+FROM tray/java:8-jre-new
 
-ENV VERSION 1.0-SNAPSHOT
+ADD test-repo-.tgz /
 
-ADD test-repo-1.0-SNAPSHOT.tgz /test-repo
-COPY VERSION /VERSION
-COPY entrypoint.sh /entrypoint.sh
-
-ENTRYPOINT ["test-repo-1.0-SNAPSHOT/bin/test-repo"]
+ENTRYPOINT ["/test-repo/bin/test-repo"]
