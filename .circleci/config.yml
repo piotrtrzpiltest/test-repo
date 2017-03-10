@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    working_directory: /code
+    docker:
+      - image: tray/sbt
+    steps:
+      - checkout
+      - restore_cache:
+          key: test-repo-cache
+      - run: |
+          echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
+          ./sbt clean test
+      - save_cache:
+          key: test-repo-cache
+          paths:
+            - /ivy
+            - /sbt
+      - store_test_results:
+          path: target/test-reports
+      - run: |
+          ./sbt universal:package-zip-tarball
+      - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
+      - setup_docker_engine
+      - run: |
+          docker build -t piotrtrzpil/${CIRCLE_PROJECT_REPONAME}:circle --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker push piotrtrzpil/test-repo:circle
+
+
