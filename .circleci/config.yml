@@ -23,8 +23,11 @@ jobs:
       - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
       - setup_docker_engine
       - run: |
-          docker build -t piotrtrzpil/${CIRCLE_PROJECT_REPONAME}:circle --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
+          saneBranchName=$(python /scripts/sane_branch_name.py ${CIRCLE_BRANCH})
+          dockerRepoName="piotrtrzpil/${CIRCLE_PROJECT_REPONAME}"
+          docker build -t ${dockerRepoName}:${CIRCLE_SHA1} -t ${dockerRepoName}:${saneBranchName} --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
           docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push piotrtrzpil/test-repo:circle
+          docker push ${dockerRepoName}:${CIRCLE_SHA1}
+          docker push ${dockerRepoName}:${saneBranchName}
 
 
