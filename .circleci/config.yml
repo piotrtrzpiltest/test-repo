@@ -17,8 +17,6 @@ jobs:
             docker run -d --name cassandra piotrtrzpil/cassandra-cs-test
       - restore_cache:
           key: ${CIRCLE_PROJECT_REPONAME}-cache
-#      - restore_cache:
-#          key: ${CIRCLE_PROJECT_REPONAME}-cache
       - run:
           name: Initial setup
           command: echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
@@ -30,11 +28,6 @@ jobs:
           paths:
             - /ivy
             - /sbt
-#      - save_cache:
-#          key: ${CIRCLE_PROJECT_REPONAME}-code-cache
-#          paths:
-#            - /code
-#            - /sbt
       - store_test_results:
           path: target/test-reports
 
