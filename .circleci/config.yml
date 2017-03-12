@@ -9,6 +9,7 @@ jobs:
       - image: tutum/influxdb:0.13
     steps:
       - checkout
+      - setup_docker_engine
       - run:
           name: Start test databases
           command: |
@@ -33,7 +34,6 @@ jobs:
 
       - run: ./sbt universal:package-zip-tarball
 
-      - setup_docker_engine
       - run:
           name: Docker build and push
           command: |
