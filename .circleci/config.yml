@@ -4,14 +4,23 @@ jobs:
     working_directory: /code
     docker:
       - image: tray/sbt:a
+      - image: redis:2.8.19
+      - image: nats:0.7.2
+      - image: tutum/influxdb:0.13
     steps:
       - checkout
+      - run:
+          name: Start test databases
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker run -d --name postgres piotrtrzpil/postgres-cs-test
+            docker run -d --name cassandra piotrtrzpil/cassandra-cs-test
       - restore_cache:
           key: ${CIRCLE_PROJECT_REPONAME}-cache
 #      - restore_cache:
 #          key: ${CIRCLE_PROJECT_REPONAME}-cache
       - run:
-          name: initial setup
+          name: Initial setup
           command: echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
 
       - run: ./sbt clean test
@@ -47,7 +56,7 @@ jobs:
             docker build -t ${dockerRepoName}:staging-${CIRCLE_SHA1} -t ${dockerRepoName}:staging-${saneBranchName} -f staging/DockerfileMod staging
             docker build -t ${dockerRepoName}:production-${CIRCLE_SHA1} -t ${dockerRepoName}:production-${saneBranchName} -f production/DockerfileMod production
 
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
+#            docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push ${dockerRepoName}:${CIRCLE_SHA1}
             docker push ${dockerRepoName}:staging-${CIRCLE_SHA1}
             docker push ${dockerRepoName}:production-${CIRCLE_SHA1}
