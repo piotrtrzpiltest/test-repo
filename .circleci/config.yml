@@ -4,7 +4,6 @@ jobs:
     working_directory: /code
     docker:
       - image: tray/sbt:a
-      - image: redis:2.8.19
     steps:
       - checkout
       - setup_docker_engine
@@ -12,8 +11,9 @@ jobs:
           name: Start test databases
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker run -d --name postgres piotrtrzpil/postgres-cs-test
             docker run -d --name cassandra piotrtrzpil/cassandra-cs-test
+            docker run -d --name postgres piotrtrzpil/postgres-cs-test
+            docker run -d --name redis redis:2.8.19
       - restore_cache:
           key: ${CIRCLE_PROJECT_REPONAME}-cache
       - run:
