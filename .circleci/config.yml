@@ -49,7 +49,6 @@ jobs:
             docker build -t ${dockerRepoName}:staging-${CIRCLE_SHA1} -t ${dockerRepoName}:staging-${saneBranchName} -f staging/DockerfileMod staging
             docker build -t ${dockerRepoName}:production-${CIRCLE_SHA1} -t ${dockerRepoName}:production-${saneBranchName} -f production/DockerfileMod production
 
-#            docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push ${dockerRepoName}:${CIRCLE_SHA1}
             docker push ${dockerRepoName}:staging-${CIRCLE_SHA1}
             docker push ${dockerRepoName}:production-${CIRCLE_SHA1}
