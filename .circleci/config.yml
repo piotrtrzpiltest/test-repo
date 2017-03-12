@@ -6,7 +6,6 @@ jobs:
       - image: tray/sbt:a
       - image: redis:2.8.19
       - image: nats:0.7.2
-      - image: tutum/influxdb:0.13
     steps:
       - checkout
       - setup_docker_engine
