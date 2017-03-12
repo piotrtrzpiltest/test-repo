@@ -35,8 +35,8 @@ jobs:
 
           docker build -t ${dockerRepoName}:${CIRCLE_SHA1} -t ${dockerRepoName}:${saneBranchName} --build-arg GIT_COMMIT=$CIRCLE_SHA1 --build-arg REPO_NAME=$CIRCLE_PROJECT_REPONAME .
 
-          python /scripts/replace_base_image.py $(cat staging/Dockerfile) $CIRCLE_SHA1 > staging/DockerfileMod
-          python /scripts/replace_base_image.py $(cat production/Dockerfile) $CIRCLE_SHA1 > production/DockerfileMod
+          python /scripts/replace_base_image.py "$(cat staging/Dockerfile)" $CIRCLE_SHA1 > staging/DockerfileMod
+          python /scripts/replace_base_image.py "$(cat production/Dockerfile)" $CIRCLE_SHA1 > production/DockerfileMod
 
           docker build -t ${dockerRepoName}:staging-${CIRCLE_SHA1} -t ${dockerRepoName}:staging-${saneBranchName} -f staging/DockerfileMod staging
           docker build -t ${dockerRepoName}:production-${CIRCLE_SHA1} -t ${dockerRepoName}:production-${saneBranchName} -f production/DockerfileMod production
