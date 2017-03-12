@@ -37,19 +37,19 @@ jobs:
           command: |
             mv target/universal/${CIRCLE_PROJECT_REPONAME}.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
             saneBranchName=$(python /scripts/sane_branch_name.py ${CIRCLE_BRANCH})
-            dockerRepoName="piotrtrzpil/${CIRCLE_PROJECT_REPONAME}"
+            dockerRepo="piotrtrzpil/${CIRCLE_PROJECT_REPONAME}"
 
-            docker build -t ${dockerRepoName}:${CIRCLE_SHA1} -t ${dockerRepoName}:${saneBranchName} --build-arg GIT_COMMIT=$CIRCLE_SHA1 --build-arg REPO_NAME=$CIRCLE_PROJECT_REPONAME .
+            docker build -t ${dockerRepo}:${CIRCLE_SHA1} -t ${dockerRepo}:${saneBranchName} --build-arg GIT_COMMIT=$CIRCLE_SHA1 --build-arg REPO_NAME=$CIRCLE_PROJECT_REPONAME .
 
             python /scripts/replace_base_image.py "$(cat staging/Dockerfile)" $CIRCLE_SHA1 > staging/DockerfileMod
             python /scripts/replace_base_image.py "$(cat production/Dockerfile)" $CIRCLE_SHA1 > production/DockerfileMod
 
-            docker build -t ${dockerRepoName}:staging-${CIRCLE_SHA1} -t ${dockerRepoName}:staging-${saneBranchName} -f staging/DockerfileMod staging
-            docker build -t ${dockerRepoName}:production-${CIRCLE_SHA1} -t ${dockerRepoName}:production-${saneBranchName} -f production/DockerfileMod production
+            docker build -t ${dockerRepo}:staging-${CIRCLE_SHA1} -t ${dockerRepo}:staging-${saneBranchName} -f staging/DockerfileMod staging
+            docker build -t ${dockerRepo}:production-${CIRCLE_SHA1} -t ${dockerRepo}:production-${saneBranchName} -f production/DockerfileMod production
 
-            docker push ${dockerRepoName}:${CIRCLE_SHA1}
-            docker push ${dockerRepoName}:staging-${CIRCLE_SHA1}
-            docker push ${dockerRepoName}:production-${CIRCLE_SHA1}
-            docker push ${dockerRepoName}:${saneBranchName}
-            docker push ${dockerRepoName}:staging-${saneBranchName}
-            docker push ${dockerRepoName}:production-${saneBranchName}
+            docker push ${dockerRepo}:${CIRCLE_SHA1}
+            docker push ${dockerRepo}:staging-${CIRCLE_SHA1}
+            docker push ${dockerRepo}:production-${CIRCLE_SHA1}
+            docker push ${dockerRepo}:${saneBranchName}
+            docker push ${dockerRepo}:staging-${saneBranchName}
+            docker push ${dockerRepo}:production-${saneBranchName}
