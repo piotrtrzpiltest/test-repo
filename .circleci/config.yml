@@ -8,6 +8,8 @@ jobs:
       - checkout
       - restore_cache:
           key: ${CIRCLE_PROJECT_REPONAME}-cache
+#      - restore_cache:
+#          key: ${CIRCLE_PROJECT_REPONAME}-cache
       - run: |
           echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
           ./sbt clean test
@@ -16,6 +18,11 @@ jobs:
           paths:
             - /ivy
             - /sbt
+#      - save_cache:
+#          key: ${CIRCLE_PROJECT_REPONAME}-code-cache
+#          paths:
+#            - /code
+#            - /sbt
       - store_test_results:
           path: target/test-reports
       - run: |
@@ -25,7 +32,19 @@ jobs:
           mv target/universal/${CIRCLE_PROJECT_REPONAME}.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
           saneBranchName=$(python /scripts/sane_branch_name.py ${CIRCLE_BRANCH})
           dockerRepoName="piotrtrzpil/${CIRCLE_PROJECT_REPONAME}"
+
           docker build -t ${dockerRepoName}:${CIRCLE_SHA1} -t ${dockerRepoName}:${saneBranchName} --build-arg GIT_COMMIT=$CIRCLE_SHA1 --build-arg REPO_NAME=$CIRCLE_PROJECT_REPONAME .
+
+          python /scripts/replace_base_image.py $(cat staging/Dockerfile) $CIRCLE_SHA1 > staging/DockerfileMod
+          python /scripts/replace_base_image.py $(cat production/Dockerfile) $CIRCLE_SHA1 > production/DockerfileMod
+
+          docker build -t ${dockerRepoName}:staging-${CIRCLE_SHA1} -t ${dockerRepoName}:staging-${saneBranchName} -f staging/DockerfileMod staging
+          docker build -t ${dockerRepoName}:production-${CIRCLE_SHA1} -t ${dockerRepoName}:production-${saneBranchName} -f production/DockerfileMod production
+
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker push ${dockerRepoName}:${CIRCLE_SHA1}
+          docker push ${dockerRepoName}:staging-${CIRCLE_SHA1}
+          docker push ${dockerRepoName}:production-${CIRCLE_SHA1}
           docker push ${dockerRepoName}:${saneBranchName}
+          docker push ${dockerRepoName}:staging-${saneBranchName}
+          docker push ${dockerRepoName}:production-${saneBranchName}
