@@ -10,7 +10,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.7"
 
-
 resolvers += "RoundEights" at "http://maven.spikemark.net/roundeights"
 
 resolvers += "elasticsearch-releases" at "https://maven.elasticsearch.org/releases"
@@ -23,7 +22,6 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
   Resolver.bintrayRepo("websudos", "oss-releases")
 )
-
 
 libraryDependencies ++= Seq(
   jdbc,
