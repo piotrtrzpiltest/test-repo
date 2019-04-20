@@ -17,6 +17,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("websudos", "oss-releases")
 )
 
+
 libraryDependencies ++= Seq(
   jdbc,
   cache,
