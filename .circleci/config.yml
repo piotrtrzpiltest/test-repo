@@ -3,28 +3,53 @@ jobs:
   build:
     working_directory: /code
     docker:
-      - image: tray/sbt
+      - image: tray/sbt:a
     steps:
       - checkout
+      - setup_docker_engine
+      - run:
+          name: Start test databases
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker run -d --name cassandra piotrtrzpil/cassandra-cs-test
+            docker run -d --name postgres piotrtrzpil/postgres-cs-test
+            docker run -d --name redis redis:2.8.19
       - restore_cache:
-          key: test-repo-cache
-      - run: |
-          echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
-          ./sbt clean test
+          key: ${CIRCLE_PROJECT_REPONAME}-cache
+      - run:
+          name: Initial setup
+          command: echo "sbt -v -ivy /ivy -sbt-dir /sbt/dir -sbt-boot /sbt/boot -sbt-launch-dir /sbt/launch \$@" > sbt && chmod 0755 ./sbt
+
+      - run: ./sbt clean test
+
       - save_cache:
-          key: test-repo-cache
+          key: ${CIRCLE_PROJECT_REPONAME}-cache
           paths:
             - /ivy
             - /sbt
       - store_test_results:
           path: target/test-reports
-      - run: |
-          ./sbt universal:package-zip-tarball
-      - run: mv target/universal/${CIRCLE_PROJECT_REPONAME}.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
-      - setup_docker_engine
-      - run: |
-          docker build -t piotrtrzpil/${CIRCLE_PROJECT_REPONAME}:circle --build-arg GIT_COMMIT=$CIRCLE_SHA1 .
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push piotrtrzpil/test-repo:circle
 
+      - run: ./sbt universal:package-zip-tarball
 
+      - run:
+          name: Docker build and push
+          command: |
+            mv target/universal/${CIRCLE_PROJECT_REPONAME}.tgz ${CIRCLE_PROJECT_REPONAME}.tgz
+            saneBranchName=$(python /scripts/sane_branch_name.py ${CIRCLE_BRANCH})
+            dockerRepo="piotrtrzpil/${CIRCLE_PROJECT_REPONAME}"
+
+            docker build -t ${dockerRepo}:${CIRCLE_SHA1} -t ${dockerRepo}:${saneBranchName} --build-arg GIT_COMMIT=$CIRCLE_SHA1 --build-arg REPO_NAME=$CIRCLE_PROJECT_REPONAME .
+
+            python /scripts/replace_base_image.py "$(cat staging/Dockerfile)" $CIRCLE_SHA1 > staging/DockerfileMod
+            python /scripts/replace_base_image.py "$(cat production/Dockerfile)" $CIRCLE_SHA1 > production/DockerfileMod
+
+            docker build -t ${dockerRepo}:staging-${CIRCLE_SHA1} -t ${dockerRepo}:staging-${saneBranchName} -f staging/DockerfileMod staging
+            docker build -t ${dockerRepo}:production-${CIRCLE_SHA1} -t ${dockerRepo}:production-${saneBranchName} -f production/DockerfileMod production
+
+            docker push ${dockerRepo}:${CIRCLE_SHA1}
+            docker push ${dockerRepo}:staging-${CIRCLE_SHA1}
+            docker push ${dockerRepo}:production-${CIRCLE_SHA1}
+            docker push ${dockerRepo}:${saneBranchName}
+            docker push ${dockerRepo}:staging-${saneBranchName}
+            docker push ${dockerRepo}:production-${saneBranchName}

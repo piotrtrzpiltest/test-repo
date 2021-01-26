@@ -1,8 +1,9 @@
 FROM tray/java:8-jre-new
 
 ARG GIT_COMMIT
+ARG REPO_NAME
 ENV APP_VERSION ${GIT_COMMIT}
 
-ADD test-repo.tgz /
+ADD ${REPO_NAME}.tgz /
 
-ENTRYPOINT ["/test-repo/bin/test-repo"]
+ENTRYPOINT ["/${REPO_NAME}/bin/${REPO_NAME}"]
